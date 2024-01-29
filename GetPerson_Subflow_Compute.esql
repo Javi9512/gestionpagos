@@ -1,0 +1,20 @@
+
+
+CREATE COMPUTE MODULE GetPerson_Subflow_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		declare name char Environment.name;
+		declare dbrow row;
+		
+		set dbrow.person[] =	select r.DOCUMENT_NUMBER AS ci, r.NAME AS name,  r.ADDRESS AS address, r.PHONE as phone, r.IS_EMPLOYEE as is_employee
+								from Database.SYSTEM.PERSON_TBL as r 
+								where r.DOCUMENT_NUMBER= Environment.document_number AND (name = '' or r.NAME like '%' || name || '%') ;
+		set Environment.document_number=NULL;
+		if EXISTS(dbrow.person[]) then
+			set OutputRoot.XMLNSC.person[] = dbrow.person[] ;
+			return true;
+		end if;
+		return false;
+	END;
+
+END MODULE;

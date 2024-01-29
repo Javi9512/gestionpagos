@@ -1,0 +1,28 @@
+
+
+CREATE COMPUTE MODULE UpdatePerson_Subflow_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		declare updateStatement, whereStatement, statement character;
+        set updateStatement = 'update SYSTEM.PERSON_TBL set NAME = '''  || Environment.name || ''', ADDRESS = '''|| Environment.address || ''', PHONE = ''' || Environment.phone || ''', IS_EMPLOYEE ='|| cast(Environment.is_employee as character) ;
+		set whereStatement = 'where DOCUMENT_NUMBER = ' ||''''||Environment.document_number||'''';
+		set statement = updateStatement || whereStatement;
+		PASSTHRU (statement);
+		/*update Database.SYSTEM.PERSON_TBL set   = ,  = ,  = ,  = 
+		where  = Environment.document_number;*/
+		/*
+		set Environment.document_number=inref.document_number;
+			set Environment.name=inref.name;
+			set Environment.address=inref.address;
+			set Environment.phone = inref.phone;
+			set Environment.is_employee = inref.is_employee;
+			
+			select r.DOCUMENT_NUMBER AS ci, r.NAME AS name,  r.ADDRESS AS address, r.PHONE as phone, r.IS_EMPLOYEE as is_employee
+								from Database.SYSTEM.PERSON_TBL as r 
+								where r.DOCUMENT_NUMBER= Environment.document_number AND (name = '' or r.NAME like '%' || name || '%') ;
+		*/
+		RETURN FALSE;
+	END;
+
+
+END MODULE;

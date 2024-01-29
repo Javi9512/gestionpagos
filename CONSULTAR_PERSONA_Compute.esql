@@ -1,0 +1,25 @@
+
+
+CREATE COMPUTE MODULE CONSULTAR_PERSONA_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		declare inref reference to InputRoot.XMLNSC.[<];
+		if contains(fieldname(inref), 'updateperson') then
+			set Environment.document_number = COALESCE(inref.documentNumber,'');
+			set Environment.name = COALESCE(inref.name, '');
+			set Environment.address = COALESCE(inref.address,'');
+			set Environment.phone = COALESCE(inref.phone,'');
+			set Environment.is_employee = COALESCE(cast(inref.isEmployee as integer), 0);
+			propagate to terminal 1;
+			return false;
+			
+		elseif contains(fieldname(inref), 'getperson') then
+			set Environment.document_number = inref.documentNumber;
+			set Environment.name = COALESCE(inref.name, '');
+			propagate;
+		end if;
+		
+		RETURN false;
+	END;
+
+END MODULE;
